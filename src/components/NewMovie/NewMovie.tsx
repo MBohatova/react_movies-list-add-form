@@ -27,7 +27,20 @@ export const NewMovie = () => {
     formData.imdbId.trim();
 
   return (
-    <form className="NewMovie" key={count}>
+    <form
+      className="NewMovie"
+      key={count}
+      onSubmit={() => {
+        setFormData({
+          title: '',
+          description: '',
+          imgUrl: '',
+          imdbUrl: '',
+          imdbId: '',
+        });
+        setCount(count + 1);
+      }}
+    >
       <h2 className="title">Add a movie</h2>
 
       <TextField
@@ -43,7 +56,6 @@ export const NewMovie = () => {
         label="Description"
         value={formData.description}
         onChange={newValue => handleChange('description', newValue)}
-        required
       />
 
       <TextField
@@ -77,16 +89,16 @@ export const NewMovie = () => {
             data-cy="submit-button"
             className="button is-link"
             disabled={!isFormValid}
-            onClick={() => {
-              setFormData({
-                title: '',
-                description: '',
-                imgUrl: '',
-                imdbUrl: '',
-                imdbId: '',
-              });
-              setCount(count + 1);
-            }}
+            // onSubmit={() => {
+            //   setFormData({
+            //     title: '',
+            //     description: '',
+            //     imgUrl: '',
+            //     imdbUrl: '',
+            //     imdbId: '',
+            //   });
+            //   setCount(count + 1);
+            // }}
           >
             Add
           </button>
