@@ -1,11 +1,16 @@
 import { useState } from 'react';
 import { TextField } from '../TextField';
+import { Movie } from '../../App'; // або правильний шлях, якщо інтерфейс у іншій папці
 
-export const NewMovie = () => {
-  // Increase the count after successful form submission
-  // to reset touched status of all the `Field`s
+// 🔹 Додаємо тип пропсів:
+type Props = {
+  onAdd: (movie: Movie) => void;
+};
+
+// 🔹 Додаємо типізацію до компонента:
+export const NewMovie: React.FC<Props> = ({ onAdd }) => {
   const [count, setCount] = useState(0);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Movie>({
     title: '',
     description: '',
     imgUrl: '',
@@ -13,11 +18,11 @@ export const NewMovie = () => {
     imdbId: '',
   });
 
-  const handleChange = (name: string, newValue: string) => {
-    setFormData({
-      ...formData,
+  const handleChange = (name: keyof Movie, newValue: string) => {
+    setFormData(prev => ({
+      ...prev,
       [name]: newValue,
-    });
+    }));
   };
 
   const isFormValid =
@@ -26,21 +31,22 @@ export const NewMovie = () => {
     formData.imdbUrl.trim() &&
     formData.imdbId.trim();
 
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    onAdd(formData);
+
+    setFormData({
+      title: '',
+      description: '',
+      imgUrl: '',
+      imdbUrl: '',
+      imdbId: '',
+    });
+    setCount(prev => prev + 1);
+  };
+
   return (
-    <form
-      className="NewMovie"
-      key={count}
-      onSubmit={() => {
-        setFormData({
-          title: '',
-          description: '',
-          imgUrl: '',
-          imdbUrl: '',
-          imdbId: '',
-        });
-        setCount(count + 1);
-      }}
-    >
+    <form className="NewMovie" key={count} onSubmit={handleSubmit}>
       <h2 className="title">Add a movie</h2>
 
       <TextField
@@ -89,16 +95,6 @@ export const NewMovie = () => {
             data-cy="submit-button"
             className="button is-link"
             disabled={!isFormValid}
-            // onSubmit={() => {
-            //   setFormData({
-            //     title: '',
-            //     description: '',
-            //     imgUrl: '',
-            //     imdbUrl: '',
-            //     imdbId: '',
-            //   });
-            //   setCount(count + 1);
-            // }}
           >
             Add
           </button>
